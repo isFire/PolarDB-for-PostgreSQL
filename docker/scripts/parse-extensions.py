@@ -169,6 +169,18 @@ class ExtensionParser:
             if ext1 in extensions and ext2 in extensions:
                 conflicts.append((ext1, ext2))
 
+        # 检测 Pigsty 与 PolarDB 扩展的命名冲突
+        # 某些扩展可能同时存在于 Pigsty 和 PolarDB 中
+        pigsty_polar_conflicts = [
+            'pgvector',  # 如果同时在 Pigsty 和 PolarDB 中
+            'pg_repack',
+        ]
+
+        categorized = self.categorize_extensions(extensions)
+        for ext in pigsty_polar_conflicts:
+            if ext in categorized['polar'] and ext in categorized['pigsty']:
+                conflicts.append(('polar_' + ext, 'pigsty_' + ext))
+
         return conflicts
 
     def resolve_dependencies(self, extensions: List[str]) -> List[str]:
@@ -345,17 +357,23 @@ class ExtensionParser:
                 "# Pigsty 扩展",
                 "# ============================================",
                 "",
-                f"PIGSTY_EXTENSIONS={' '.join(categorized['pigsty'])}",
-                "echo \"Pigsty 扩展: $PIGSTY_EXTENSIONS\"",
+                f"PIGSTY_EXTENSIONS_LIST={' '.join(categorized['pigsty'])}",
+                "export PIGSTY_EXTENSIONS_LIST",
+                "echo \"Pigsty 扩展: $PIGSTY_EXTENSIONS_LIST\"",
                 "",
-                "# 使用 pig 包管理器安装",
-                "if command -v pig &> /dev/null; then",
-                "    pig install $PIGSTY_EXTENSIONS || {",
+                "# 检查 Pigsty 安装脚本是否存在",
+                "if [ -f /usr/local/bin/install-pigsty-extensions.sh ]; then",
+                "    # 使用专业的 Pigsty 安装脚本",
+                "    bash /usr/local/bin/install-pigsty-extensions.sh || {",
+                "        echo \"警告: Pigsty 扩展安装失败\" >&2",
+                "    }",
+                "elif command -v pig &> /dev/null; then",
+                "    # 回退：直接使用 pig 包管理器",
+                "    pig install $PIGSTY_EXTENSIONS_LIST || {",
                 "        echo \"警告: 部分 Pigsty 扩展安装失败\" >&2",
                 "    }",
                 "else",
-                "    echo \"错误: pig 包管理器未安装\" >&2",
-                "    exit 1",
+                "    echo \"错误: Pigsty 未配置，跳过 Pigsty 扩展安装\" >&2",
                 "fi",
             ])
 

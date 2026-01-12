@@ -715,5 +715,124 @@
     "build_from_source": false,
     "min_pg_version": "15",
     "max_pg_version": "17"
+  },
+
+  "wal2json": {
+    "category": "pigsty",
+    "description": "逻辑解码输出为 JSON 格式",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": "postgresql-15-wal2json",
+      "anolis": "wal2json"
+    },
+    "build_from_source": false,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "pglogical": {
+    "category": "pigsty",
+    "description": "逻辑复制扩展",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": "postgresql-15-pglogical",
+      "anolis": "pglogical"
+    },
+    "build_from_source": false,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "pg_hint_plan": {
+    "category": "pigsty",
+    "description": "查询执行计划提示扩展",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": "postgresql-15-pg-hint-plan",
+      "anolis": "pg_hint_plan"
+    },
+    "build_from_source": false,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "pg_background": {
+    "category": "pigsty",
+    "description": "后台任务执行扩展",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": "postgresql-15-pg-background",
+      "anolis": "pg_background"
+    },
+    "build_from_source": false,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "pg_wait_sampling": {
+    "category": "pigsty",
+    "description": "等待事件采样扩展",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": "postgresql-15-pg-wait-sampling",
+      "anolis": "pg_wait_sampling"
+    },
+    "build_from_source": false,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "pg_qualstats": {
+    "category": "pigsty",
+    "description": "查询谓词统计扩展",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": "postgresql-15-pg-qualstats",
+      "anolis": "pg_qualstats"
+    },
+    "build_from_source": false,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "pg_track_settings": {
+    "category": "pigsty",
+    "description": "配置变更跟踪扩展",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": "postgresql-15-pg-track-settings",
+      "anolis": "pg_track_settings"
+    },
+    "build_from_source": false,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
   }
 }

@@ -63,7 +63,7 @@
 
 ## 阶段 2: 多 OS 支持
 
-- [ ] 2.1 实现 Ubuntu 扩展安装脚本模板
+- [x] 2.1 实现 Ubuntu 扩展安装脚本模板
   - File: docker/installers/install-ubuntu-extensions.sh
   - 创建 Ubuntu 特定的扩展安装逻辑
   - 处理 DEB 包依赖和安装
@@ -73,7 +73,7 @@
   - _Requirements: 1.1, 1.2, 1.3, 3.1, 3.2_
   - _Prompt: 角色: Debian/Ubuntu 包管理专家 | 任务: 创建 Ubuntu 扩展安装脚本，实现 apt-get 包安装逻辑，处理 PolarDB 扩展从源码编译，支持 PostGIS、pgRouting 等空间扩展的安装，参考 package/debian/build-deb.sh 的依赖处理 | 限制: 必须处理包安装失败，提供清晰的错误消息，使用 DEBIAN_FRONTEND=noninteractive，正确处理依赖关系 | 成功: 脚本正确安装所有配置的扩展，错误处理完善，支持从包和源码安装，日志信息清晰_
 
-- [ ] 2.2 实现 Anolis 扩展安装脚本模板
+- [x] 2.2 实现 Anolis 扩展安装脚本模板
   - File: docker/installers/install-anolis-extensions.sh
   - 创建 Anolis/RHEL 特定的扩展安装逻辑
   - 处理 RPM 包依赖和安装
@@ -105,8 +105,8 @@
 
 ## 阶段 3: Pigsty 集成
 
-- [ ] 3.1 实现 Pigsty 仓库配置脚本
-  - File: docker/scripts/install-pigsty.sh
+- [x] 3.1 实现 Pigsty 仓库配置脚本
+  - File: docker/installers/install-pigsty.sh
   - 创建配置 Pigsty APT/YUM 仓库的逻辑
   - 安装 `pig` 包管理器
   - 实现仓库可用性检测
@@ -115,7 +115,7 @@
   - _Requirements: 4.1, 4.2, 4.3_
   - _Prompt: 角色: 包管理仓库专家，擅长第三方仓库集成 | 任务: 创建 install-pigsty.sh 脚本，实现 Ubuntu 和 Anolis 的 Pigsty 仓库配置，使用 curl 下载仓库配置，安装 `pig` 包管理器，添加仓库健康检查和超时处理，参考 Pigsty 官方文档的仓库配置方法 | 限制: 必须处理网络失败，提供清晰的错误消息，支持 Ubuntu DEB 和 Anolis RPM 两种包格式，验证 GPG 密钥（如果可用） | 成功: 脚本正确配置 Pigsty 仓库，`pig` 包管理器成功安装，仓库可用性检测工作正常，错误处理完善_
 
-- [ ] 3.2 实现 Pigsty 扩展安装逻辑
+- [x] 3.2 实现 Pigsty 扩展安装逻辑
   - File: docker/installers/install-pigsty-extensions.sh
   - 使用 `pig` 命令安装扩展
   - 实现扩展回退到源码构建
@@ -125,7 +125,7 @@
   - _Requirements: 4.1, 4.2, 4.3_
   - _Prompt: 角色: PostgreSQL 扩展专家，熟悉 Pigsty 生态 | 任务: 创建 install-pigsty-extensions.sh 脚本，使用 `pig install` 命令安装配置的扩展列表，实现失败时回退到源码构建的逻辑，处理 Pigsty 扩展的依赖关系，记录安装日志 | 限制: 必须处理 `pig` 命令失败，回退到源码构建时需要依赖信息，提供详细的安装日志，避免重复安装 | 成功: 脚本从 Pigsty 成功安装扩展，失败时正确回退到源码构建，依赖关系正确处理，日志信息详细_
 
-- [ ] 3.3 扩展元数据库集成 Pigsty 扩展
+- [x] 3.3 扩展元数据库集成 Pigsty 扩展
   - File: docker/scripts/extension-metadata.json (修改)
   - 添加常用 Pigsty 扩展的元数据
   - 定义 Pigsty 扩展的依赖关系
@@ -135,7 +135,7 @@
   - _Requirements: 4.1, 4.2_
   - _Prompt: 角色: 数据维护专家，擅长元数据管理 | 任务: 扩展 extension-metadata.json，添加常用 Pigsty 扩展（pgvector, timescaledb, postgis, pg_repack 等）的元数据，定义正确的依赖关系，标记每个扩展在不同 OS 的支持情况 | 限制: 必须验证扩展名称的正确性，依赖关系必须准确，OS 支持信息要与实际情况一致，保持与现有 schema 一致 | 成功: JSON 包含完整的 Pigsty 扩展元数据，依赖关系正确，OS 支持信息准确，schema 一致性良好_
 
-- [ ] 3.4 扩展解析器集成 Pigsty 支持
+- [x] 3.4 扩展解析器集成 Pigsty 支持
   - File: docker/scripts/parse-extensions.py (修改)
   - 解析 pigsty 扩展集合
   - 调用 Pigsty 安装脚本
@@ -241,15 +241,15 @@
   - _Requirements: 易用性需求 - 文档和示例_
   - _Prompt: 角色: 解决方案架构师，擅长场景设计 | 任务: 在 docker/examples/ 目录创建多个配置示例，包括 minimal.yml（最小扩展集）、full.yml（所有扩展）、gis.yml（空间扩展）、ai.yml（AI/ML 扩展），每个示例包含注释说明 | 限制: 必须验证每个示例的语法正确性，确保示例是实际可用的，注释要清晰说明使用场景，避免过度复杂 | 成功: 每个示例文件语法正确，可以直接使用，注释清晰，涵盖不同使用场景_
 
-- [ ] 6.3 实现集成测试
-  - File: tests/docker-build-test.sh
+- [x] 6.3 实现集成测试
+  - File: docker/scripts/test-image.sh
   - 创建端到端构建测试
   - 验证生成的镜像可以启动
   - 测试扩展正确安装
   - 目的: 确保 Docker 构建系统的可靠性
   - _Leverage: .github/workflows/precheck.yml 中的测试模式_
   - _Requirements: 测试需求 - 集成测试_
-  - _Prompt: 角色: QA 工程师，擅长容器测试 | 任务: 创建 docker-build-test.sh 测试脚本，测试完整的构建流程，验证镜像启动和运行，使用 psql 测试扩展可用性（CREATE EXTENSION），检查镜像大小和健康状态 | 限制: 必须测试成功和失败场景，使用真实的扩展配置，提供清晰的测试报告，测试可在本地和 CI 运行 | 成功: 测试脚本覆盖主要构建流程，正确验证镜像功能，测试报告清晰，可以在 CI 中自动运行_
+  - _Prompt: 角色: QA 工程师，擅长容器测试 | 任务: 创建 test-image.sh 测试脚本，测试镜像启动和运行，使用 psql 测试扩展可用性（CREATE EXTENSION），检查镜像大小和健康状态 | 限制: 必须测试成功和失败场景，使用真实的扩展配置，提供清晰的测试报告，测试可在本地和 CI 运行 | 成功: 测试脚本覆盖主要功能，正确验证镜像功能，测试报告清晰，可以在 CI 中自动运行_
 
 - [ ] 6.4 实现镜像验证测试
   - File: tests/docker-image-validation.sh
