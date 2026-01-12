@@ -1,0 +1,23 @@
+# =============================================================================
+# PolarDB Docker 空间数据库配置示例
+# =============================================================================
+# 包含 PostGIS、pgRouting 等地理空间扩展
+# 适合 GIS 应用
+# =============================================================================
+
+extension_sets:
+  # 核心监控
+  core:
+    - polar_monitor
+    - polar_audit
+
+  # 完整空间扩展集
+  spatial_full:
+    - postgis                 # 地理空间对象支持
+    - postgis_raster          # 栅格数据支持
+    - postgis_tiger_geocoder   # TIGER 地理编码器
+    - address_standardizer    # 地址标准化
+    - pgrouting               # 路径算法
+    - ogr_fdw                 # OGR 外部数据包装器
+
+default_sets: [core, spatial_full]
