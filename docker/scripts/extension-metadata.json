@@ -1,0 +1,719 @@
+{
+  "_schema_version": "1.0",
+  "_description": "PolarDB Docker 扩展元数据仓库",
+  "_last_updated": "2025-01-12",
+
+  "polar_audit": {
+    "category": "polar",
+    "description": "PolarDB 审计日志扩展",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": null,
+      "anolis": null
+    },
+    "build_from_source": true,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "polar_feature_utils": {
+    "category": "polar",
+    "description": "PolarDB 功能工具集",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": null,
+      "anolis": null
+    },
+    "build_from_source": true,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "polar_io_stat": {
+    "category": "polar",
+    "description": "PolarDB IO 统计扩展",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": null,
+      "anolis": null
+    },
+    "build_from_source": true,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "polar_login_history": {
+    "category": "polar",
+    "description": "PolarDB 登录历史记录",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": null,
+      "anolis": null
+    },
+    "build_from_source": true,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "polar_masking": {
+    "category": "polar",
+    "description": "PolarDB 数据脱敏扩展",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": null,
+      "anolis": null
+    },
+    "build_from_source": true,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "polar_monitor": {
+    "category": "polar",
+    "description": "PolarDB 性能监控扩展",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": null,
+      "anolis": null
+    },
+    "build_from_source": true,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "polar_monitor_preload": {
+    "category": "polar",
+    "description": "PolarDB 监控预加载库",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": null,
+      "anolis": null
+    },
+    "build_from_source": true,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "polar_parameter_manager": {
+    "category": "polar",
+    "description": "PolarDB 参数管理扩展",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": null,
+      "anolis": null
+    },
+    "build_from_source": true,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "polar_password_policy": {
+    "category": "polar",
+    "description": "PolarDB 密码策略扩展",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": null,
+      "anolis": null
+    },
+    "build_from_source": true,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "polar_proxy_utils": {
+    "category": "polar",
+    "description": "PolarDB 代理工具扩展",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": null,
+      "anolis": null
+    },
+    "build_from_source": true,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "polar_resource_manager": {
+    "category": "polar",
+    "description": "PolarDB 资源管理器",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": null,
+      "anolis": null
+    },
+    "build_from_source": true,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "polar_smgrperf": {
+    "category": "polar",
+    "description": "PolarDB 存储管理器性能监控",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": null,
+      "anolis": null
+    },
+    "build_from_source": true,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "polar_stat_env": {
+    "category": "polar",
+    "description": "PolarDB 统计环境扩展",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": null,
+      "anolis": null
+    },
+    "build_from_source": true,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "polar_worker": {
+    "category": "polar",
+    "description": "PolarDB 工作进程管理",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": null,
+      "anolis": null
+    },
+    "build_from_source": true,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "hll": {
+    "category": "analytics",
+    "description": "HyperLogLog 基数估计算法",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": "postgresql-15-hll",
+      "anolis": "postgresql15_hll"
+    },
+    "build_from_source": true,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "hypopg": {
+    "category": "analytics",
+    "description": "虚拟索引测试扩展",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": "postgresql-15-hypopg",
+      "anolis": "postgresql15_hypopg"
+    },
+    "build_from_source": true,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "log_fdw": {
+    "category": "analytics",
+    "description": "日志文件外部数据包装器",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": "postgresql-15-logfdw",
+      "anolis": "postgresql15_logfdw"
+    },
+    "build_from_source": true,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "pase": {
+    "category": "analytics",
+    "description": "Pandora 搜索引擎扩展",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": null,
+      "anolis": null
+    },
+    "build_from_source": true,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "pg_bigm": {
+    "category": "fulltext_search",
+    "description": "双字符匹配全文搜索",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": "postgresql-15-pgbigm",
+      "anolis": "postgresql15_pgbigm"
+    },
+    "build_from_source": true,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "pg_jieba": {
+    "category": "fulltext_search",
+    "description": "中文分词扩展",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": null,
+      "anolis": null
+    },
+    "build_from_source": true,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "pg_repack": {
+    "category": "analytics",
+    "description": "表碎片整理工具",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": "postgresql-15-repack",
+      "anolis": "postgresql15_repack"
+    },
+    "build_from_source": false,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "pgvector": {
+    "category": "ai_vector",
+    "description": "向量相似度搜索扩展",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": "postgresql-15-pgvector",
+      "anolis": "postgresql15_pgvector"
+    },
+    "build_from_source": true,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "polar_sql_mapping": {
+    "category": "polar",
+    "description": "PolarDB SQL 映射扩展",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": null,
+      "anolis": null
+    },
+    "build_from_source": true,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "roaringbitmap": {
+    "category": "analytics",
+    "description": "Roaring 位图压缩算法",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": "postgresql-15-roaringbitmap",
+      "anolis": "postgresql15_roaringbitmap"
+    },
+    "build_from_source": true,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "postgis": {
+    "category": "spatial",
+    "description": "PostGIS 地理空间对象支持",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": "postgresql-15-postgis-3",
+      "anolis": "postgresql15-postgis3"
+    },
+    "build_from_source": false,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "postgis_raster": {
+    "category": "spatial",
+    "description": "PostGIS 栅格数据支持",
+    "dependencies": ["postgis"],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": "postgresql-15-postgis-3-scripts",
+      "anolis": "postgresql15-postgis3-scripts"
+    },
+    "build_from_source": false,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "postgis_sfcgal": {
+    "category": "spatial",
+    "description": "PostGIS SFCGAL 几何引擎",
+    "dependencies": ["postgis"],
+    "os_support": {
+      "ubuntu": ["22.04", "24.04"],
+      "anolis": ["23"]
+    },
+    "package_name": {
+      "ubuntu": "postgresql-15-postgis-3-scripts",
+      "anolis": "postgresql15-postgis3-scripts"
+    },
+    "build_from_source": false,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "postgis_tiger_geocoder": {
+    "category": "spatial",
+    "description": "PostGIS TIGER 地理编码器",
+    "dependencies": ["postgis"],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": "postgresql-15-postgis-3-tiger-geocoder",
+      "anolis": null
+    },
+    "build_from_source": false,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "address_standardizer": {
+    "category": "spatial",
+    "description": "地址标准化工具",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": "postgresql-15-address-standardizer",
+      "anolis": null
+    },
+    "build_from_source": false,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "pgrouting": {
+    "category": "spatial",
+    "description": "pgRouting 路径算法扩展",
+    "dependencies": ["postgis"],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": "postgresql-15-pgrouting",
+      "anolis": null
+    },
+    "build_from_source": false,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "ogr_fdw": {
+    "category": "spatial",
+    "description": "OGR 外部数据包装器",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": "postgresql-15-ogr-fdw",
+      "anolis": null
+    },
+    "build_from_source": false,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "pggeoip": {
+    "category": "spatial",
+    "description": "GeoIP 地理位置查询",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": "postgresql-15-pggeoip",
+      "anolis": null
+    },
+    "build_from_source": false,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "timescaledb": {
+    "category": "pigsty",
+    "description": "TimescaleDB 时序数据库",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": "postgresql-15-timescaledb",
+      "anolis": "timescaledb-2-postgresql-15"
+    },
+    "build_from_source": false,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "pg_cron": {
+    "category": "pigsty",
+    "description": "PostgreSQL 任务调度扩展",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": "postgresql-15-pgcron",
+      "anolis": "pg_cron"
+    },
+    "build_from_source": false,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "pg_auto_failover": {
+    "category": "pigsty",
+    "description": "自动故障转移扩展",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": "postgresql-15-auto-failover",
+      "anolis": "pg_auto_failover"
+    },
+    "build_from_source": false,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "plv8": {
+    "category": "pigsty",
+    "description": "JavaScript 语言支持 (V8引擎)",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": "postgresql-15-plv8",
+      "anolis": "plv8"
+    },
+    "build_from_source": false,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "pg_stat_statements": {
+    "category": "pigsty",
+    "description": "查询统计扩展（PostgreSQL 内置）",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": null,
+      "anolis": null
+    },
+    "build_from_source": false,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "pg_stat_kcache": {
+    "category": "pigsty",
+    "description": "内核缓存统计扩展",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["22.04", "24.04"],
+      "anolis": ["23"]
+    },
+    "package_name": {
+      "ubuntu": "postgresql-15-pg-stat-kcache",
+      "anolis": "pg_stat_kcache"
+    },
+    "build_from_source": false,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "tdigest": {
+    "category": "analytics",
+    "description": "T-Digest 近似统计算法",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": "postgresql-15-tdigest",
+      "anolis": "postgresql15_tdigest"
+    },
+    "build_from_source": false,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "pg_trgm": {
+    "category": "fulltext_search",
+    "description": "三字符匹配全文搜索（PostgreSQL 内置）",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": null,
+      "anolis": null
+    },
+    "build_from_source": false,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "zhparser": {
+    "category": "fulltext_search",
+    "description": "中文文本搜索解析器",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["20.04", "22.04", "24.04"],
+      "anolis": ["8", "23"]
+    },
+    "package_name": {
+      "ubuntu": "zhparser",
+      "anolis": null
+    },
+    "build_from_source": false,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  },
+
+  "pg_analytics": {
+    "category": "ai_vector",
+    "description": "PostgreSQL 分析函数扩展",
+    "dependencies": [],
+    "os_support": {
+      "ubuntu": ["22.04", "24.04"],
+      "anolis": ["23"]
+    },
+    "package_name": {
+      "ubuntu": "postgresql-15-analytics",
+      "anolis": null
+    },
+    "build_from_source": false,
+    "min_pg_version": "15",
+    "max_pg_version": "17"
+  }
+}

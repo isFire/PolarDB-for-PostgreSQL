@@ -1,0 +1,233 @@
+name: Build PolarDB Docker Images
+
+on:
+  push:
+    branches: [ POLARDB_15_STABLE ]
+    tags:
+      - "v*"
+  pull_request:
+    branches: [ POLARDB_15_STABLE ]
+    paths:
+      - '.github/workflows/docker-build.yml'
+      - 'docker/**'
+      - 'external/**'
+      - 'src/**'
+      - 'configure*'
+      - 'build.sh'
+  # 手动触发
+  workflow_dispatch:
+
+# 环境变量
+env:
+  DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
+  POLARDB_VERSION: "15"
+
+jobs:
+  # ===========================================================================
+  # 解析扩展配置并生成安装脚本
+  # ===========================================================================
+  parse-config:
+    name: Parse Extensions Configuration
+    runs-on: ubuntu-latest
+    outputs:
+      matrix-include: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Install Python dependencies
+        run: |
+          python3 -m pip install --upgrade pip
+          pip install pyyaml
+
+      - name: Parse extensions config
+        run: |
+          # 为所有 OS 版本生成安装脚本
+          for os in ubuntu20.04 ubuntu22.04 ubuntu24.04 anolis8 anolis23; do
+            python3 docker/scripts/parse-extensions.py \
+              --config docker/extensions.yml \
+              --metadata docker/scripts/extension-metadata.json \
+              --os "$os" \
+              --output docker/scripts/generated
+          done
+
+      - name: Generate Dockerfiles
+        run: |
+          # 为所有 OS 版本生成 Dockerfile
+          for os in ubuntu20.04 ubuntu22.04 ubuntu24.04 anolis8 anolis23; do
+            bash docker/scripts/generate-dockerfile.sh \
+              --os "$os" \
+              --output docker/generated
+          done
+
+      - name: Set build matrix
+        id: set-matrix
+        run: |
+          # 生成构建矩阵
+          matrix='['
+          first=true
+
+          for os in ubuntu20.04 ubuntu22.04 ubuntu24.04; do
+            if [ "$first" = true ]; then
+              first=false
+            else
+              matrix+=','
+            fi
+            matrix+="{\"os\":\"$os\",\"arch\":\"amd64\"}"
+            matrix+=','
+            matrix+="{\"os\":\"$os\",\"arch\":\"arm64\"}"
+          done
+
+          for os in anolis8 anolis23; do
+            if [ "$first" = true ]; then
+              first=false
+            else
+              matrix+=','
+            fi
+            matrix+="{\"os\":\"$os\",\"arch\":\"amd64\"}"
+            # Anolis 8 暂不支持 arm64
+            if [ "$os" != "anolis8" ]; then
+              matrix+=','
+              matrix+="{\"os\":\"$os\",\"arch\":\"arm64\"}"
+            fi
+          done
+
+          matrix+=']'
+          echo "matrix=$matrix" >> $GITHUB_OUTPUT
+          echo "Build matrix: $matrix"
+
+  # ===========================================================================
+  # 构建 Docker 镜像
+  # ===========================================================================
+  build:
+    name: Build Docker Image
+    needs: parse-config
+    runs-on: ${{ matrix.arch == 'arm64' && 'ubuntu-24.04-arm' || 'ubuntu-24.04' }}
+    strategy:
+      matrix: ${{ fromJson(needs.parse-config.outputs.matrix-include) }}
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          platforms: linux/amd64,linux/arm64
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/polardb
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=${{ matrix.os }},enable=${{ matrix.os != 'ubuntu24.04' }}
+            type=raw,value=latest,enable=${{ matrix.os == 'ubuntu24.04' }}
+          labels: |
+            org.opencontainers.image.title=PolarDB with Extensions
+            org.opencontainers.image.description=PolarDB PostgreSQL ${{ env.POLARDB_VERSION }} with custom extensions
+            org.opencontainers.image.vendor=PolarDB for PostgreSQL
+
+      - name: Build and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/generated/Dockerfile.${{ matrix.os }}
+          platforms: linux/${{ matrix.arch }}
+          push: true
+          tags: |
+            ${{ secrets.DOCKERHUB_USERNAME }}/polardb:${{ matrix.os }}
+            ${{ secrets.DOCKERHUB_USERNAME }}/polardb:${{ matrix.os }}-${{ matrix.arch }}
+          labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            UBUNTU_VERSION=${{ matrix.os == 'ubuntu20.04' && '20.04' || matrix.os == 'ubuntu22.04' && '22.04' || matrix.os == 'ubuntu24.04' && '24.04' || '' }}
+            ANOLIS_VERSION=${{ matrix.os == 'anolis8' && '8' || matrix.os == 'anolis23' && '23' || '' }}
+            EXTENSIONS_LIST=${{ steps.get-extensions.outputs.list }}
+            BUILD_DATE=${{ github.event.head_commit.timestamp }}
+            VCS_REF=${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          provenance: true
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ secrets.DOCKERHUB_USERNAME }}/polardb:${{ matrix.os }}-${{ matrix.arch }}
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v3
+        if: always()
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  # ===========================================================================
+  # 创建多架构 Manifest
+  # ===========================================================================
+  manifest:
+    name: Create Multi-Arch Manifests
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [ubuntu20.04, ubuntu22.04, ubuntu24.04, anolis8, anolis23]
+      fail-fast: false
+
+    steps:
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Create manifest
+        run: |
+          # 为每个 OS 版本创建多架构 manifest
+          echo "Creating manifest for ${{ matrix.os }}"
+          docker manifest create ${{ secrets.DOCKERHUB_USERNAME }}/polardb:${{ matrix.os }} \
+            ${{ secrets.DOCKERHUB_USERNAME }}/polardb:${{ matrix.os }}-amd64 \
+            ${{ secrets.DOCKERHUB_USERNAME }}/polardb:${{ matrix.os }}-arm64 || true
+
+      - name: Push manifest
+        run: |
+          docker manifest push ${{ secrets.DOCKERHUB_USERNAME }}/polardb:${{ matrix.os }}
+
+  # ===========================================================================
+  # 生成构建摘要
+  # ===========================================================================
+  summary:
+    name: Build Summary
+    needs: [parse-config, build, manifest]
+    if: always()
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Generate build summary
+        run: |
+          echo "# Docker Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Build Status" >> $GITHUB_STEP_SUMMARY
+          echo "- **OS Versions:** ubuntu20.04, ubuntu22.04, ubuntu24.04, anolis8, anolis23" >> $GITHUB_STEP_SUMMARY
+          echo "- **Architectures:** amd64, arm64" >> $GITHUB_STEP_SUMMARY
+          echo "- **Docker Repository:** ${{ secrets.DOCKERHUB_USERNAME }}/polardb" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## Usage" >> $GITHUB_STEP_SUMMARY
+          echo '```bash' >> $GITHUB_STEP_SUMMARY
+          echo "docker pull ${{ secrets.DOCKERHUB_USERNAME }}/polardb:ubuntu24.04" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY

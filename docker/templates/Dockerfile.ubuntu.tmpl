@@ -1,0 +1,180 @@
+# =============================================================================
+# PolarDB Docker Image - Ubuntu ${UBUNTU_VERSION}
+# =============================================================================
+# 多阶段构建 Dockerfile 模板
+# 自动生成 by generate-dockerfile.sh
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Stage 1: Builder - 编译 PolarDB 和扩展
+# -----------------------------------------------------------------------------
+ARG UBUNTU_VERSION=${UBUNTU_VERSION}
+FROM ubuntu:${UBUNTU_VERSION} AS builder
+
+# 构建参数
+ARG PG_MAJOR=15
+ARG EXTENSIONS_LIST=${EXTENSIONS_LIST}
+
+# 设置非交互模式
+ENV DEBIAN_FRONTEND=noninteractive
+
+# 安装构建依赖
+RUN apt-get update && apt-get install -y \
+    # 基础构建工具
+    build-essential \
+    git \
+    ccache \
+    # C/C++ 编译器
+    gcc g++ \
+    # PostgreSQL 构建依赖
+    libreadline-dev \
+    zlib1g-dev \
+    flex \
+    bison \
+    libxml2-dev \
+    libxslt1-dev \
+    libssl-dev \
+    libxml2-utils \
+    xsltproc \
+    # PolarDB 特定依赖
+    libperl-dev \
+    python3-dev \
+    tcl-dev \
+    libldap2-dev \
+    libpam0g-dev \
+    libicu-dev \
+    liblz4-dev \
+    libzstd-dev \
+    uuid-dev \
+    # 空间扩展构建依赖（如需要）
+    libgeos-dev \
+    libproj-dev \
+    libgdal-dev \
+    libjson-c-dev \
+    libboost-all-dev \
+    cmake \
+    && rm -rf /var/lib/apt/lists/*
+
+# 设置工作目录
+WORKDIR /build
+
+# 复制 PolarDB 源码
+COPY . /build/polardb/
+
+# 配置和构建 PolarDB
+RUN cd /build/polardb && \
+    ./configure \
+    --prefix=/usr/local/polardb \
+    --with-pgport=5432 \
+    --with-uuid=e2fs \
+    --with-segsize=128 \
+    --disable-rpath \
+    --with-libxml \
+    --with-libxslt \
+    CFLAGS="-O2" && \
+    # 排除 polar_tools（不需要共享存储组件）
+    sed -i '/SUBDIRS += polar_tools/d' src/bin/Makefile && \
+    make -j$(nproc) && \
+    make install
+
+# 复制并执行扩展安装脚本
+COPY docker/scripts/generated/install-extensions-${UBUNTU_VERSION}.sh /tmp/
+RUN chmod +x /tmp/install-extensions-${UBUNTU_VERSION}.sh && \
+    /tmp/install-extensions-${UBUNTU_VERSION}.sh && \
+    rm /tmp/install-extensions-${UBUNTU_VERSION}.sh
+
+# 清理构建产物以减小层大小
+RUN cd /build/polardb && make clean || true
+
+# -----------------------------------------------------------------------------
+# Stage 2: Runtime - 运行时镜像
+# -----------------------------------------------------------------------------
+ARG UBUNTU_VERSION=${UBUNTU_VERSION}
+FROM ubuntu:${UBUNTU_VERSION}
+
+# 构建参数
+ARG PG_MAJOR=15
+ARG EXTENSIONS_LIST=${EXTENSIONS_LIST}
+ARG BUILD_DATE=${BUILD_DATE}
+ARG VCS_REF=${VCS_REF}
+
+# 设置环境变量
+ENV DEBIAN_FRONTEND=noninteractive \
+    PATH=/usr/local/polardb/bin:$PATH \
+    LD_LIBRARY_PATH=/usr/local/polardb/lib \
+    PGDATA=/var/lib/postgresql/data \
+    POSTGRES_USER=polardb \
+    POSTGRES_PASSWORD=polardb \
+    POSTGRES_DB=polardb \
+    PGPORT=5432
+
+# 安装运行时依赖
+RUN apt-get update && apt-get install -y \
+    # 空间扩展运行时库
+    libgeos-dev \
+    libgeos-c1v5 \
+    libproj-dev \
+    libgdal-dev \
+    libjson-c5 \
+    # Boost 运行时库
+    libboost-system1.83.0 \
+    libboost-chrono1.83.0 \
+    libboost-regex1.83.0 \
+    libboost-serialization1.83.0 \
+    # 标准 PostgreSQL 运行时依赖
+    libssl3 \
+    libxml2 \
+    libxslt1.1 \
+    libldap2 \
+    libpam0g \
+    libicu74 \
+    liblz4-1 \
+    libzstd1 \
+    libreadline8 \
+    libncurses6 \
+    # 实用工具
+    curl \
+    less \
+    && rm -rf /var/lib/apt/lists/*
+
+# 从 builder 阶段复制 PolarDB 安装
+COPY --from=builder /usr/local/polardb /usr/local/polardb
+
+# 创建 PostgreSQL 用户和目录
+RUN groupadd -r postgres && \
+    useradd -r -g postgres -u 999 postgres && \
+    mkdir -p /var/lib/postgresql/data /docker-entrypoint-initdb.d /run/postgresql && \
+    chmod 700 /var/lib/postgresql/data && \
+    chown -R postgres:postgres /var/lib/postgresql /run/postgresql
+
+# 复制脚本
+COPY docker/scripts/entrypoint.sh /usr/local/bin/
+COPY docker/scripts/init-extensions.sql /docker-entrypoint-initdb.d/
+
+# 设置脚本可执行权限
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# 切换到 postgres 用户
+USER postgres
+
+# 暴露 PostgreSQL 端口
+EXPOSE 5432
+
+# 健康检查
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} || exit 1
+
+# 添加元数据标签
+LABEL org.opencontainers.image.title="PolarDB with Extensions" \
+    org.opencontainers.image.description="PolarDB ${PG_MAJOR} with extensions: ${EXTENSIONS_LIST}" \
+    org.opencontainers.image.version="${UBUNTU_VERSION}" \
+    org.opencontainers.image.created="${BUILD_DATE}" \
+    org.opencontainers.image.revision="${VCS_REF}" \
+    org.opencontainers.image.vendor="PolarDB for PostgreSQL" \
+    org.opencontainers.image.licenses="Apache-2.0" \
+    extensions.list="${EXTENSIONS_LIST}" \
+    postgres.version="${PG_MAJOR}"
+
+# 设置入口点和默认命令
+ENTRYPOINT ["entrypoint.sh"]
+CMD ["postgres"]

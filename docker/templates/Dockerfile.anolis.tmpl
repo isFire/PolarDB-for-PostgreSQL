@@ -1,0 +1,178 @@
+# =============================================================================
+# PolarDB Docker Image - Anolis ${ANOLIS_VERSION}
+# =============================================================================
+# 多阶段构建 Dockerfile 模板
+# 自动生成 by generate-dockerfile.sh
+# =============================================================================
+
+# -----------------------------------------------------------------------------
+# Stage 1: Builder - 编译 PolarDB 和扩展
+# -----------------------------------------------------------------------------
+ARG ANOLIS_VERSION=${ANOLIS_VERSION}
+FROM anolisos/anolis:${ANOLIS_VERSION} AS builder
+
+# 构建参数
+ARG PG_MAJOR=15
+ARG EXTENSIONS_LIST=${EXTENSIONS_LIST}
+
+# 安装构建依赖
+RUN dnf install -y \
+    # 基础构建工具
+    gcc \
+    gcc-c++ \
+    make \
+    git \
+    ccache \
+    # PostgreSQL 构建依赖
+    readline-devel \
+    zlib-devel \
+    flex \
+    bison \
+    libxml2-devel \
+    libxslt-devel \
+    openssl-devel \
+    perl-devel \
+    python3-devel \
+    tcl-devel \
+    openldap-devel \
+    pam-devel \
+    libicu-devel \
+    lz4-devel \
+    zstd-devel \
+    libuuid-devel \
+    # 空间扩展构建依赖（如需要）
+    geos-devel \
+    proj-devel \
+    gdal-devel \
+    json-c-devel \
+    boost-devel \
+    cmake \
+    # 其他工具
+    which \
+    && dnf clean all
+
+# 设置工作目录
+WORKDIR /build
+
+# 复制 PolarDB 源码
+COPY . /build/polardb/
+
+# 配置和构建 PolarDB
+RUN cd /build/polardb && \
+    ./configure \
+    --prefix=/usr/local/polardb \
+    --with-pgport=5432 \
+    --with-uuid=e2fs \
+    --with-segsize=128 \
+    --disable-rpath \
+    --with-libxml \
+    --with-libxslt \
+    CFLAGS="-O2" && \
+    # 排除 polar_tools（不需要共享存储组件）
+    sed -i '/SUBDIRS += polar_tools/d' src/bin/Makefile && \
+    make -j$(nproc) && \
+    make install
+
+# 复制并执行扩展安装脚本
+COPY docker/scripts/generated/install-extensions-anolis${ANOLIS_VERSION}.sh /tmp/
+RUN chmod +x /tmp/install-extensions-anolis${ANOLIS_VERSION}.sh && \
+    /tmp/install-extensions-anolis${ANOLIS_VERSION}.sh && \
+    rm /tmp/install-extensions-anolis${ANOLIS_VERSION}.sh
+
+# 清理构建产物以减小层大小
+RUN cd /build/polardb && make clean || true
+
+# -----------------------------------------------------------------------------
+# Stage 2: Runtime - 运行时镜像
+# -----------------------------------------------------------------------------
+ARG ANOLIS_VERSION=${ANOLIS_VERSION}
+FROM anolisos/anolis:${ANOLIS_VERSION}
+
+# 构建参数
+ARG PG_MAJOR=15
+ARG EXTENSIONS_LIST=${EXTENSIONS_LIST}
+ARG BUILD_DATE=${BUILD_DATE}
+ARG VCS_REF=${VCS_REF}
+
+# 设置环境变量
+ENV PATH=/usr/local/polardb/bin:$PATH \
+    LD_LIBRARY_PATH=/usr/local/polardb/lib \
+    PGDATA=/var/lib/postgresql/data \
+    POSTGRES_USER=polardb \
+    POSTGRES_PASSWORD=polardb \
+    POSTGRES_DB=polardb \
+    PGPORT=5432
+
+# 安装运行时依赖
+RUN dnf install -y \
+    # 空间扩展运行时库
+    geos \
+    geos-devel \
+    proj \
+    proj-devel \
+    gdal \
+    gdal-devel \
+    json-c \
+    # Boost 运行时库
+    boost-system \
+    boost-chrono \
+    boost-regex \
+    boost-serialization \
+    # 标准 PostgreSQL 运行时依赖
+    openssl-libs \
+    libxml2 \
+    libxslt \
+    openldap \
+    pam \
+    libicu \
+    lz4 \
+    zstd \
+    readline \
+    ncurses \
+    # 实用工具
+    curl \
+    less \
+    which \
+    && dnf clean all
+
+# 从 builder 阶段复制 PolarDB 安装
+COPY --from=builder /usr/local/polardb /usr/local/polardb
+
+# 创建 PostgreSQL 用户和目录
+RUN groupadd -r postgres && \
+    useradd -r -g postgres -u 999 postgres && \
+    mkdir -p /var/lib/postgresql/data /docker-entrypoint-initdb.d /run/postgresql && \
+    chmod 700 /var/lib/postgresql/data && \
+    chown -R postgres:postgres /var/lib/postgresql /run/postgresql
+
+# 复制脚本
+COPY docker/scripts/entrypoint.sh /usr/local/bin/
+COPY docker/scripts/init-extensions.sql /docker-entrypoint-initdb.d/
+
+# 设置脚本可执行权限
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# 切换到 postgres 用户
+USER postgres
+
+# 暴露 PostgreSQL 端口
+EXPOSE 5432
+
+# 健康检查
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB} || exit 1
+
+# 添加元数据标签
+LABEL org.opencontainers.image.title="PolarDB with Extensions" \
+    org.opencontainers.image.description="PolarDB ${PG_MAJOR} with extensions: ${EXTENSIONS_LIST}" \
+    org.opencontainers.image.version="${ANOLIS_VERSION}" \
+    org.opencontainers.image.created="${BUILD_DATE}" \
+    org.opencontainers.image.revision="${VCS_REF}" \
+    org.opencontainers.image.vendor="PolarDB for PostgreSQL" \
+    org.opencontainers.image.licenses="Apache-2.0" \
+    extensions.list="${EXTENSIONS_LIST}" \
+    postgres.version="${PG_MAJOR}"
+
+# 设置入口点和默认命令
+ENTRYPOINT ["entrypoint.sh"]
+CMD ["postgres"]

@@ -1,0 +1,14 @@
+{
+  "filePath": ".spec-workflow/specs/docker-image-pipeline/requirements.md",
+  "currentVersion": 1,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2026-01-12T14:09:33.746Z",
+      "trigger": "initial",
+      "approvalId": "approval_1768226973739_wpera2zdy",
+      "approvalTitle": "Docker Image Pipeline with Configurable Extensions"
+    }
+  ]
+}

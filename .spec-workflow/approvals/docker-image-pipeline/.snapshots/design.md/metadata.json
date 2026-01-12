@@ -1,0 +1,14 @@
+{
+  "filePath": ".spec-workflow/specs/docker-image-pipeline/design.md",
+  "currentVersion": 1,
+  "snapshots": [
+    {
+      "version": 1,
+      "filename": "snapshot-001.json",
+      "timestamp": "2026-01-12T14:15:34.348Z",
+      "trigger": "initial",
+      "approvalId": "approval_1768227334346_g7if3ss4g",
+      "approvalTitle": "Docker Image Pipeline - Technical Design"
+    }
+  ]
+}
